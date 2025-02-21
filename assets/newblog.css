@@ -1138,6 +1138,10 @@
     font-size: 18px;
   }
   
+  .article .sideSections--content_headings{
+    top: 55px;
+  }
+  
   .article .sidebar .content_headings .headingLinks a svg{
     min-width: 18px:
   }
@@ -1177,7 +1181,7 @@
   .article .content .sidebar {
     width: 100%;
   }
-  
+
   .article .sideSections--content_headings{
     position: relative;
     top: 0px;
