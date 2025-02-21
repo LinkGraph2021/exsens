@@ -4,7 +4,7 @@ jQuery(document).ready(function () {
 
   if ($headings.length) {
     jQuery(window).on("scroll", function () {
-      if (jQuery(window).scrollTop() > offset) {
+      if (jQuery(window).scrollTop() > offset  && window.innerWidth > 768) {
         $headings.addClass("stickied");
       } else {
         $headings.removeClass("stickied");
