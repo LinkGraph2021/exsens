@@ -1,0 +1,26 @@
+{% assign collection = collections[collection] %}
+{% assign products = collection.products %}
+{% assign products_per_row = 3 %}
+
+
+<div class="container">
+  <div class="section clearfix">
+      <div class="sixteen columns">
+      {% if section.settings.title != blank %}
+        <h2 class="section-header title">
+          {{ section.settings.title | escape }}
+        </h2>
+        {% if collections[section.settings.frontpage_collection] != blank %}
+          <div class="section clearfix">
+            {{ collections[section.settings.frontpage_collection].description }}
+          </div>
+        {% endif %}
+      {% endif %}
+
+      {% if products.size > 0 %}
+        {% assign limit = 3 %}
+        {% render 'product-loop', products: products, limit: limit, products_per_row: products_per_row %}
+      {% endif %}
+    </div>
+  </div>
+</div>
