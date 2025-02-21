@@ -592,10 +592,12 @@
   align-content: flex-start;
 }
 .article .sideSections--content_headings{
-  position: sticky;
   top: 95px;
   z-index: 5;
   background: white;
+}
+.article .sideSections--content_headings.stickied{
+  position: sticky;
 }
 .article .sidebar .social_v2{
   display: flex;
