@@ -1138,10 +1138,6 @@
     font-size: 18px;
   }
   
-  .article .sideSections--content_headings{
-    top: 55px;
-  }
-  
   .article .sidebar .content_headings .headingLinks a svg{
     min-width: 18px:
   }
@@ -1159,6 +1155,12 @@
   }
   .article .sidebar .banner-sectionI--2 img{
     height: 160px;
+  }
+}
+
+@media(max-width: 890px){
+  .article .sideSections--content_headings{
+    top: 55px;
   }
 }
 
