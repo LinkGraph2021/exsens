@@ -1,6 +1,6 @@
 jQuery(document).ready(function () {
   var $headings = jQuery(".article .sideSections--content_headings");
-  var offset = jQuery('.sideSections--cta')[1].offsetTop + 200; // Adjust as needed
+  var offset = jQuery('.sideSections--cta')[1].offsetTop + 500; // Adjust as needed
 
   if ($headings.length) {
     jQuery(window).on("scroll", function () {
