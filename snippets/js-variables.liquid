@@ -1,0 +1,13 @@
+{% capture js_variables %}
+
+Shopify = window.Shopify || {};
+
+{% comment %} /* # Routes
+================================================== */ {% endcomment %}
+Shopify.routes = Shopify.routes || {};
+
+Shopify.routes.cart_url = {{ routes.cart_url | json }};
+
+{% endcapture %}
+{%- assign js_variables = js_variables | split: 'Shopify.' -%}
+{%- for variable in js_variables -%}{%- assign variableblock = variable | strip -%}{% if forloop.first %}{{ variableblock }}{% else %}{{ variableblock | prepend: 'Shopify.' }}{% endif %}{%- endfor -%}

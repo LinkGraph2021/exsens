@@ -1,0 +1,120 @@
+<!-- ReSci start (Inserted on: 2021-07-07 17:16:04 UTC -->
+<script type="text/javascript">
+  window._rsq = window._rsq || [];
+  window._rsq.push(['_setSiteId', '1368']); // Your unique ReSci ID
+  window._rsq.push(['_enableOnsite']);
+
+  {% if customer %}
+  window._rsq.push(['_setUserId', '{{ customer.id }}']);
+  window._rsq.push(['_setUserEmail', '{{ customer.email }}']);
+  {% endif %}
+
+  /*** Item View Event ***/
+  {% if template.name == 'product' and product %}
+  {% if product.first_available_variant.id %}
+  window._rsq.push(['_addItem', {'id': '{{product.first_available_variant.id}}'}]);
+  {% endif %}
+
+  {% if product.first_available_variant.id == '' %}
+  window._rsq.push(['_addItem', {'id': '{{product.id}}'}]);
+  {% endif %}
+  {% endif %}
+
+  /*** Cart View Event ***/
+  {% if template.name == 'cart' %}
+  {% for item in cart.items %}
+  window._rsq.push(['_addItem', { 'id':'{{ item.id }}', 'name':"{{ item.title }}", 'price':'{{ item.price | money_without_currency }}' }]);
+  {% endfor %}
+  window._rsq.push(['_setAction', 'shopping_cart']);
+  {% endif %}
+
+  /*** Search View Event ***/
+  {% if template.name == 'search' and search.performed %}  window._rsq.push(['_setAction', 'search']) ;
+  window._rsq.push(['_setParams', { 'term': '{{ search.terms }}'}]);
+  {% endif %}
+
+  window._rsq.push(['_track']);
+  
+  
+/*** QUICK SHOP TRACKING ***/
+let check_viewed_item = id => {
+  _rsq.push(['_addItem', { id }]);
+  _rsq.push(['_setAction', 'view']);
+  _rsq.push(['_track']);
+}
+
+/*** FUNCTION FOR AJAX TRACKING ***/
+let check_cart = () => {
+  fetch('/cart.js')
+    .then(res => res.json())
+    .then(cart => {
+      cart.items.forEach(item => {
+        _rsq.push(['_addItem', {
+          'id': item.id.toString(),
+          'name': item.title,
+          'price': (item.price / 100).toFixed(2).toString()
+        }]);
+      });
+      _rsq.push(['_setAction', 'shopping_cart']);
+      _rsq.push(['_track']);
+    })
+    .catch(err => console.log('Request Error ', err.message));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Quick View
+  document.querySelectorAll('.quick_shop').forEach(btn => {
+    btn.addEventListener('click', e => {
+      let mainId = e.target.dataset.fancyboxHref.match(/\d+/)[0];
+      let form = document.querySelector(`#product-${mainId} .product_form`);
+      let variant = JSON.parse(form.dataset.product).variants[0];
+      let id = variant.id.toString();
+      let name = variant.name;
+      let price = (variant.price/100).toFixed(2).toString()
+
+      // Item View
+      check_viewed_item(id);
+
+      // Add to Cart
+      form.addEventListener('submit', () => add_to_cart(id, name, price));
+    })
+  });
+
+  // Product Page Add to Cart
+  document.querySelectorAll('[action="/cart/add"]')[0]?.addEventListener('submit', e => {
+    let variants = meta.product.variants;
+    let choice = e.target.elements.id.value;
+    let variant = variants.find(v => v.id === +choice) || variants[0];
+
+    add_to_cart(
+      variant.id.toString(), 
+      variant.name,
+      (variant.price/100).toFixed(2).toString()
+    );
+  });
+
+  // Email Capture
+  document.querySelector('form[action="/contact#"]')?.addEventListener('submit', e => {
+    let uEmail = e.target.elements['contact[email]'].value;
+    _rsq.push(['_setUserEmail', uEmail]);
+    _rsq.push(['_setAction', 'email_entered']);
+    _rsq.push(['_track']);
+  });
+
+  // Shopping Cart View
+  document.querySelectorAll('.cart-button').forEach(btn => {
+    btn.addEventListener('click', check_cart);
+  });
+});
+                                 
+
+  /*** ReSci Script ***/
+  (function() {
+    var rScix = document.createElement('script');
+    rScix.type = 'text/javascript';
+    rScix.async = true;
+    rScix.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'd1stxfv94hrhia.cloudfront.net/waves/v3/w.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(rScix);
+  })();
+</script>
+<!-- ReSci end -->
