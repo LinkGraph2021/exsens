@@ -15,6 +15,12 @@ quickshop: <boolean>
     {% assign enable_thumbnail_slider = settings.enable_thumbnail_slider %}
     {% assign gallery_arrows = settings.gallery_arrows %}
     {% assign slideshow_transition = settings.slideshow_transition %}
+  {% elsif basic %}
+    {% assign display_thumbnails = false %}
+    {% assign thumbnail_position = 'bottom' %}
+    {% assign enable_thumbnail_slider = false %}
+    {% assign gallery_arrows = false %}
+    {% assign slideshow_transition = '0' %}
   {% else %}
     {% assign display_thumbnails = section.settings.display_thumbnails %}
     {% assign thumbnail_position = section.settings.thumbnail_position %}

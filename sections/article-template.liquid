@@ -1,10 +1,23 @@
 {% paginate article.comments by 100 %}
 
 {% if article.image and section.settings.slideshow_article_enabled %}
-  <div class="banner-section dark-overlay--{{ section.settings.slideshow_post_darken }} wide_display--true">
+  <div class="banner-section banner-featured dark-overlay--{{ section.settings.slideshow_post_darken }} wide_display--true">
     <div class="banner-section__image">
-      {% include 'image-element', image: article.image, alt: article.image.alt %}
+      {% render 'image-element', image: article.image, alt: article.image.alt, stretch_width: true %}
+
+      {% if section.settings.blog_breadcrumb %}
+        <div class="clearfix breadcrumb container">
+          <div class="breadcrumb_text">
+            <!-- <a href="{{ shop.url }}" title="{{ shop.name | escape }}">{{ 'general.breadcrumbs.home' | t }}</a> -->
+            <!-- &nbsp; / &nbsp; -->
+            <a href="{{ blog.url }}" title="{{ blog.title | escape }}">Blog</a>
+            {% render 'right-arrow' %}
+            <span class="articleTitle">{{ article.title }}</span>
+          </div>
+        </div>
+      {% endif %}
     </div>
+    
   </div>
 {% endif %}
 
@@ -15,183 +28,180 @@
   {% assign sidebar = false %}
 {% endif %}
 
-<div class="main_content_area content container">
-  <div class="twelve columns {% if sidebar == false %}offset-by-two{% endif %}">
-      {% if section.settings.blog_breadcrumb %}
-        <div class="clearfix breadcrumb">
-          <div class="breadcrumb_text">
-            <a href="{{ shop.url }}" title="{{ shop.name | escape }}">{{ 'general.breadcrumbs.home' | t }}</a>
-            &nbsp; / &nbsp;
-            <a href="{{ blog.url }}" title="{{ blog.title | escape }}">{{ blog.title }}</a>
-            &nbsp; / &nbsp;
-            {{ article.title }}
-          </div>
-        </div>
-      {% endif %}
+<div class="container containerTitle">
+  <div class="contentTitle">
+    <h1 class="article_name">{{ article.title }}</h1>
+  </div>
+</div>
 
-      {% if section.settings.blog_tags %}
-        <div class="blog_meta tags {% if article.image and section.settings.slideshow_article_enabled %}right{% endif %}">
-          {% for tag in article.tags %}
-            <span><a href="{{ shop.url}}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a></span>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-        <h1 class="article_name">{{ article.title }}</h1>
-
-        <p class="blog_meta">
-          {% if section.settings.blog_author %}
-            <span>{{ 'blogs.article.by_author' | t: author: article.author }}</span>
-          {% endif %}
-
-          {% if section.settings.blog_date %}
-            <span>{{ article.published_at | date: format: "month_day_year" }}</span>
-          {% endif %}
-
-          {% if section.settings.blog_comment_count %}
-            {% if settings.disqus_enabled %}
-              <span>
-                <a href="{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">{{ 'blogs.counts.comments_with_count' | t: count: 0 }}</a>
-              </span>
-            {% elsif article.comments_enabled? and article.comments_count > 0 %}
-              <span>
-                <a href="{{ article.url }}#comments">{{ 'blogs.counts.comments_with_count' | t: count: article.comments_count }}</a>
-              </span>
-            {% endif %}
-          {% endif %}
-        </p>
-
-        {% if article.image and section.settings.slideshow_article_enabled == false %}
-          {% include 'image-element', image: article.image, alt: article.image.alt %}
-        {% endif %}
-
-        {{ article.content }}
-
-        <span class="clear"></span>
-
-        {% if section.settings.display_social_buttons %}
-          <br class="clear" />
-          {% include "social-buttons" with "article" %}
-          <br class="clear" />
-        {% endif %}
-        <br class="clear" />
-
-        {% if section.settings.blog_author %}
-          <hr />
-          <div class="gravatar two columns alpha center" data-email="{{ article.user.email }}">
-            <img src="//1.gravatar.com/avatar/{{ article.user.email | md5 }}?s=160&r=G" alt="{{ article.author }}" />
-          </div>
-          <div class="comment-body eight columns omega">
-            <h6>{{ article.author }}</h6>
-            <p class="meta">
-              <span class="label">{{ 'blogs.article.author' | t }}</span>
-            </p>
-            <p>
-              {{ article.user.bio }}
-            </p>
-          </div>
-        {% endif %}
-
-        <div class="clear" id="comments"></div>
-        <br class="clear" />
-
-        {% if settings.disqus_enabled %}
-          <div id="disqus_thread"></div>
-          <script>
-              var disqus_config = function () {
-                  this.page.url = "{{ canonical_url }}";
-                  this.page.identifier = "{{ article.id }}";
-              };
-              (function() {
-                  var d = document, s = d.createElement('script');
-                  s.src = '//{{ settings.disqus_shortname }}.disqus.com/embed.js';
-                  s.setAttribute('data-timestamp', +new Date());
-                  (d.head || d.body).appendChild(s);
-              })();
-          </script>
-          <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-        {% elsif blog.comments_enabled? %}
-          {% if article.comments_count > 0 %}
-            <h4>{{ 'blogs.comments.response_count' | t: count: article.comments.size }}</h4>
-
-            {% for comment in article.comments %}
-              <div id="comment-{{ comment.id }}" class="comment clearfix">
-                <div class="gravatar two columns alpha center">
-                  <img src="//1.gravatar.com/avatar/{{ comment.email | md5 }}?s=80&r=G" alt="{{ comment.author }}" />
-                </div>
-                <div class="comment-body eight columns omega">
-                  <h6>{{ comment.author }}</h6>
-                  <p class="meta">
-                    <span class="label">{{ comment.created_at | date: format: "month_day_year" }}</span>
-                  </p>
-
-                  {{ comment.content }}
-                </div>
-              </div>
+<div class="content container">
+  <div class="contentInner">
+    <div class="twelve columns contentCol {% if sidebar == false %}offset-by-two{% endif %}">
+        {% if section.settings.blog_tags %}
+          <div class="blog_meta tags {% if article.image and section.settings.slideshow_article_enabled %}right{% endif %}">
+            {% for tag in article.tags %}
+              <span><a href="{{ shop.url}}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a></span>
             {% endfor %}
-          {% endif %}
-
-          {% if comment and comment.created_at %}
-            {% if article.comments_count == 0 %}
-              <h4>{{ 'blogs.comments.response_count' | t: count: article.comments.size }}</h4>
+          </div>
+        {% endif %}
+  
+          <div class="blog_meta">
+            {% if section.settings.blog_author %}
+              <div>
+                <div>{{ 'blogs.article.by_author' | t }}</div>
+                <div class="blogData">
+                  {% assign author_image = article.metafields.author.image | default: section.settings.author_basic %}
+                  <div class="blogAuthorImage">{% render 'image-element', image: author_image, alt: article.image.alt, max_height: '45' %}</div>
+                  {{ article.metafields.author.name | metafield_tag | default: section.settings.author_default | default: article.author }}
+                </div>
+              </div>
             {% endif %}
-            <div id="comment-{{ comment.id }}" class="comment clearfix">
-              <div class="gravatar two columns alpha center">
-                <img src="//1.gravatar.com/avatar/{{ comment.email | md5 }}?s=80&r=G" alt="{{ comment.author }}" />
+  
+            {% if section.settings.blog_date %}
+              <div>
+                <div>Published on</div>
+                <div class="blogData">{{ article.published_at | date: format: "month_day_year" }}</div>
               </div>
-              <div class="comment-body eight columns omega">
-                <h6>{{ comment.author }}</h6>
-                <p class="meta">
-                  <span class="label">{{ comment.created_at | date: format: "month_day_year" }}</span>
-                </p>
-
-                {{ comment.content }}
-              </div>
-            </div>
-          {% endif %}
-
-          {% include 'pagination', sidebar: sidebar %}
-
-          <div class="clear" id="new-comment"></div>
-          <h4 class="title">{{ 'blogs.comments.title' | t }}</h4>
-
-          {% if blog.moderated? %}
-            <p><em>{{ 'blogs.comments.moderated' | t }}</em></p>
-          {% endif %}
-
-          {% form article %}
-            {% if form.posted_successfully? %}
-              {% if blog.moderated? %}
-                <p class="quote align_left">{{ 'blogs.comments.success_moderated' | t }}</p>
-              {% else %}
-                <p class="quote align_left">{{ 'blogs.comments.success' | t }}</p>
+            {% endif %}
+  
+            {% if section.settings.blog_comment_count %}
+              {% if settings.disqus_enabled %}
+                <span>
+                  <a href="{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">{{ 'blogs.counts.comments_with_count' | t: count: 0 }}</a>
+                </span>
+              {% elsif article.comments_enabled? and article.comments_count > 0 %}
+                <span>
+                  <a href="{{ article.url }}#comments">{{ 'blogs.counts.comments_with_count' | t: count: article.comments_count }}</a>
+                </span>
               {% endif %}
             {% endif %}
-
-            {% if form.errors %}
-              <p class="quote align_left">{{ 'general.forms.post_error' | t }}</p>
-            {% endif %}
-
-            <div class="six columns alpha">
-              <label for="comment_author">{{ 'blogs.comments.name' | t }} <span class="red">*</span></label>
-              <input type="text" id="comment_author" name="comment[author]" value="{{ form.author }}" required="required" />
+          </div>
+  
+          {% if article.image and section.settings.slideshow_article_enabled == false %}
+            {% include 'image-element', image: article.image, alt: article.image.alt %}
+          {% endif %}
+  
+          {% assign collection = article.metafields.feature.collecton.value.handle | default: section.settings.frontpage_collection %}
+          {% capture my_collection %}
+            <div class="collectionI">
+              <div class="collectionHeading">
+                <h2>Shop the Collection</h2>
+                <a href="{{ article.metafields.feature.collecton.value.url | default: section.settings.frontpage_collection.url }}" 
+                  class="action_button action_button--is-solid action_button--is-rounded action_button--has-text-shadow">
+                  see all
+                </a>
+              </div>
+              {% render 'blog-collection', collection: collection %}
             </div>
+          {% endcapture %}
+          
+          <div class="contentWrapper">
+            {% assign content = article.content %}
+            {% assign h2s = content | split: '<h2' %}
+            {% assign contentnew = '' %}
+  
+            {% capture my_section %}
+              {% if article.metafields.feature.product %}
+                {% render 'blog-product', product: article.metafields.feature.product.value %}
+              {% else %}
+                {% assign featured_collection = collections['shop-all'] %}
+                {% assign featured_product = featured_collection.products.first %}
+                {% render 'blog-product', product: featured_product %}
+              {% endif %}
+            {% endcapture %}
+  
+            {% assign productPos = h2s.size | minus: 3 %}
+            {% assign productColl = h2s.size | minus: 1 %}
+            {% for h2 in h2s %}
+              {% assign h2_end = h2 | split: '</h2>' %}
+              
+              {% if h2_end[0] != h2 and h2.size != 0 %}
+                {% assign clean_h2 = h2_end[0] %}
+                
+                {% assign heading_id = h2_end[0] 
+                  | downcase 
+                  | replace: '&nbsp;', '' 
+                  | replace: ' ', ''
+                  | remove: '%C2%A0'
+                  | replace: ' ', '-' 
+                  | replace: '_', '-' 
+                  | remove: '.' 
+                  | remove: ',' 
+                  | remove: '!' 
+                  | remove: '#' 
+                  | remove: '"' 
+                  | remove: '@' 
+                  | remove: '$' 
+                  | remove: '>' 
+                  | remove: '-data-mce-fragment=' 
+                  | remove: 1
+                  | remove: 2
+                  | remove: 3
+                  | remove: 4
+                  | remove: 5
+                  | remove: 6
+                  | remove: 7
+                  | remove: 8
+                  | remove: 9
+                  | remove: 0
+                  | remove: '/'
+                  | remove: '<span'
+                  | remove: 'lang=en'
+                  | strip_html 
+                  | strip 
+                  | escape 
+                  | replace_first: '-', ''
+                %}
+  
+                {% assign contentnew = contentnew | append: '<span class="idSelectors" id="' | append: heading_id | append: '"></span><h2' | append: clean_h2 | append: '</h2>' | append: h2_end[1] %}
+                
+                {% if forloop.index == productPos %}
+                  {% assign contentnew = contentnew | append: my_section %}
+                {% endif %}
+  
+  
+                {% if forloop.index == productColl %}
+                  {% assign contentnew = contentnew | append: my_collection %}
+                {% endif %}
+  
+              {% elsif h2 != 0 %}
+                {% assign contentnew = contentnew | append: h2_end[0] | append: '</h2>' | append: h2_end[1] %}
+              {% endif %}
+            {% endfor %}
+            
+            {{ contentnew }}
+    
+            {% comment %}
+              {{ article.content }}
+            {% endcomment %}
+          </div>
+  
+          {% if settings.disqus_enabled %}
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
+                    this.page.url = "{{ canonical_url }}";
+                    this.page.identifier = "{{ article.id }}";
+                };
+                (function() {
+                    var d = document, s = d.createElement('script');
+                    s.src = '//{{ settings.disqus_shortname }}.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+          {% endif %}
+    </div>
+  
+    {% render "blog-sidebar", blog_handle: blog.handle %}
+  </div>
+</div>
 
-            <div class="six columns omega">
-              <label for="comment_email">{{ 'blogs.comments.email' | t }} <span class="red">*</span></label>
-              <input type="text" id="comment_email" name="comment[email]" value="{{ form.email }}" required="required" />
-            </div>
-
-            <label for="comment_body">{{ 'blogs.comments.comment' | t }} <span class="red">*</span></label>
-            <textarea id="comment_body" name="comment[body]" rows="5" required="required">{{ form.body }}</textarea>
-
-            <input type="submit" value="{{ 'blogs.comments.post' | t }}" id="comment-submit" class="action_button add_to_cart" />
-          {% endform %}
-        {% endif %}
-
+  {% if section.settings.blog_additional_articles %}
+    <div class="container additionalBlogs">
     {% if section.settings.blog_additional_articles and blog.articles_count > 1 %}
       <div class="section clearfix">
-        <hr />
         <h3>{{ 'blogs.article.additional_articles' | t: title: blog.title }}</h3>
 
         {% assign article_found = false %}
@@ -208,7 +218,7 @@
             <div class="four columns {% cycle 'alpha', ' ', 'omega' %} article">
               {% if a.image %}
                 <a href="{{ a.url }}" title="{{ a.title | escape }}">
-                  {% include 'image-element', image: a.image, alt: a.image.alt %}
+                  {% render 'image-element', image: a.image, alt: a.image.alt %}
                 </a>
               {% endif %}
 
@@ -266,20 +276,37 @@
       </div>
     {% endif %}
   </div>
-
-  {% include "blog-sidebar", blog_handle: blog.handle %}
-
-  <script type="text/javascript">
-    // <![CDATA[
-      $(function() {
-        if(window.location.pathname.indexOf('/comments') != -1) {
-          $('html,body').animate({scrollTop: $("#new-comment").offset().top-140},'slow');
-        }
-      });
-    // ]]>
-  </script>
+  {% endif %}
 {% endpaginate %}
-</div>
+
+<script>
+  jQuery(document).ready(function(){
+    // Select all anchor links with the 'scroll-link' class
+    jQuery('.headingLinks a').on('click', function(event) {
+      // Prevent the default action of the anchor tag (which is jumping directly to the section)
+      event.preventDefault();
+      
+      // Get the target section's ID from the href attribute
+      var target = jQuery(this).attr('href');
+      
+      // Animate the scroll to the section
+      jQuery('html, body').animate({
+        scrollTop: $(target).offset().top - 100 // Scroll to the top of the target section
+      }, 1000); // 1000 ms is the duration of the animation (1 second)
+    });
+  });
+
+</script>
+
+<script type="text/javascript">
+  // <![CDATA[
+    $(function() {
+      if(window.location.pathname.indexOf('/comments') != -1) {
+        $('html,body').animate({scrollTop: $("#new-comment").offset().top-140},'slow');
+      }
+    });
+  // ]]>
+</script>
 
 {% schema %}
 
@@ -293,6 +320,36 @@
       "label": "Show article banner image",
       "info": "The blog post's featured image will be used as a full-width banner",
       "default": false
+    },
+    {
+      "type": "text",
+      "id": "author_default",
+      "label": "Author default name"
+    },
+    {
+      "type": "image_picker",
+      "id": "author_basic",
+      "label": "Image author basic"
+    },
+    {
+      "type": "collection",
+      "id": "frontpage_collection",
+      "label": "Feature collection on blog content"
+    },
+    {
+      "type": "richtext",
+      "id": "product_title",
+      "label": "Product title"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_feature",
+      "label": "Image feature product"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_feature",
+      "label": "Image feature product bg"
     },
     {
       "type": "checkbox",
@@ -434,7 +491,100 @@
            "default": "<p>Text area can be used for details about blog authors or general information.</p>"
          }
        ]
-     }
+     },
+    {
+      "type": "content_headings",
+      "name": "Content navigation",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "h2",
+          "label": "H2"
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "name": "CTA",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "wide_display",
+          "default": true,
+          "label": "Wide display"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1800 x 1000px recommended"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your headline here"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>This is a short subheading for your banner image</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "default": "center",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        }
+      ]
+    }
    ]
  }
 

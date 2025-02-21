@@ -26,7 +26,7 @@
     <div class="relative product_image">
       <div class="product-container {% if settings.collection_secondary_image != blank and images[1] != blank %}swap-{{ settings.collection_secondary_image }}{% else %}swap-false{% endif %}">
         <div class="image__container">
-          {% include 'image-element', image: static_image, alt: alt_text, object_fit: settings.align_height %}
+          {% render 'image-element', image: static_image, alt: alt_text, object_fit: settings.align_height %}
           <div class="transition-helper">
           </div>
           {% if settings.collection_secondary_image != blank and images[1] != blank %}
@@ -108,7 +108,7 @@
       {% endif %}
     </div>
   </a>
-  {% include 'collection-swatch' %}
+  {% render 'collection-swatch' %}
 </div>
 
 {% if settings.quick_shop_enabled %}
@@ -131,7 +131,7 @@
     <div class="container" style="width: inherit">
 
       <div class="eight columns" style="padding-left: 15px">
-        {% include 'product-images' with 'modal', video_looping: settings.video_looping, quickshop: true %}
+        {% render 'product-images' with 'modal', video_looping: settings.video_looping, quickshop: true %}
       </div>
 
       <div class="six columns">
@@ -173,11 +173,11 @@
               </span>
             </p>
           {% endunless %}
-          {% include 'size-chart-popup' %}
+          {% render 'size-chart-popup' %}
         </div>
 
         {% unless collection_handles contains 'coming-soon' %}
-          {% include 'product-notify-me' %}
+          {% render 'product-notify-me' %}
         {% endunless %}
 
         {% if settings.product_description_position == "top" %}
@@ -199,7 +199,7 @@
 
         <div class="js-product_section">
           {% unless collection_handles contains 'coming-soon' %}
-            {% include 'product-form', show_payment_button_quickshop: settings.show_payment_button %}
+            {% render 'product-form', show_payment_button_quickshop: settings.show_payment_button %}
           {% endunless %}
         </div>
 

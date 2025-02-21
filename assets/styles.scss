@@ -2361,7 +2361,7 @@ ul.tabs {
   input[type="search"]::-webkit-search-results-decoration { display: none; }
 
   select {
-    background: #fff url(//exsens-usa.com/cdn/shop/t/5/assets/select.png?v=175701240018354382511616137642) no-repeat right center;
+    background: #fff url(//exsens-usa.com/cdn/shop/t/11/assets/select.png?v=175701240018354382511737998983) no-repeat right center;
     cursor: pointer;
     padding: 10px 2em 10px 8px;
     -webkit-padding-end: 30px;
@@ -3054,7 +3054,7 @@ $edit-cart-background-color: #aaaaaa;
   }
 
   .container div.breadcrumb {
-    display: none;
+    /* display: none; */
     font-size: 13px;
   }
 
@@ -5651,6 +5651,15 @@ html.mm-pagedim #mm-blocker,html.mm-pagedim-black #mm-blocker,html.mm-pagedim-wh
 .banner-section {
   position: relative;
   
+    .action_button {
+      border-color: #f4cf16;
+      background-color: #f4cf16;
+      &:hover {
+        border-color: #fbe02f;
+      background-color: #fbe02f;
+      }
+    }
+  
   @include respond-to('medium') {
     padding-top: 0 !important; //Overwrite any attribute styles applied by JS for mobile
   }
@@ -6313,7 +6322,7 @@ html.mm-pagedim #mm-blocker,html.mm-pagedim-black #mm-blocker,html.mm-pagedim-wh
 #fancybox-loading div {
   width: 44px;
   height: 44px;
-  background: url('//exsens-usa.com/cdn/shop/t/5/assets/loader.gif?v=38408244440897529091616137636') center center no-repeat;
+  background: url('//exsens-usa.com/cdn/shop/t/11/assets/loader.gif?v=38408244440897529091737998983') center center no-repeat;
   background-size: 32px 32px;
   display: block !important;
 }
@@ -7513,11 +7522,11 @@ $product-media-bg-color: #ffffff;
 ================================================== */
 @font-face {
   font-family: 'retina';
-  src: url('//exsens-usa.com/cdn/shop/t/5/assets/retina.eot?v=166760862168710722611616137638');
-  src: url('//exsens-usa.com/cdn/shop/t/5/assets/retina.eot?%23iefix&v=166760862168710722611616137638') format('embedded-opentype'),
-       url('//exsens-usa.com/cdn/shop/t/5/assets/retina.woff?v=33290029472256611871616137640') format('woff'),
-       url('//exsens-usa.com/cdn/shop/t/5/assets/retina.ttf?v=59573684349632133251616137639') format('truetype'),
-       url('//exsens-usa.com/cdn/shop/t/5/assets/retina.svg?v=99661000267777537281616137639') format('svg');
+  src: url('//exsens-usa.com/cdn/shop/t/11/assets/retina.eot?v=166760862168710722611737998983');
+  src: url('//exsens-usa.com/cdn/shop/t/11/assets/retina.eot?%23iefix&v=166760862168710722611737998983') format('embedded-opentype'),
+       url('//exsens-usa.com/cdn/shop/t/11/assets/retina.woff?v=33290029472256611871737998983') format('woff'),
+       url('//exsens-usa.com/cdn/shop/t/11/assets/retina.ttf?v=59573684349632133251737998983') format('truetype'),
+       url('//exsens-usa.com/cdn/shop/t/11/assets/retina.svg?v=99661000267777537281737998983') format('svg');
   font-weight: normal;
   font-style: normal;
 }

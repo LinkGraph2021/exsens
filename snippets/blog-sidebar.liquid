@@ -1,8 +1,16 @@
 {% if section.blocks.size > 0 %}
   <div class="sidebar four columns toggle-all--{{ section.settings.toggle }}">
     <div class="sidebar_content">
+
+      {% if section.settings.display_social_buttons %}
+        <div class="sideSections">
+          {% render "social-buttons-v2" with "article" %}
+        </div>
+      {% endif %}
+
+      {% assign ctas = 0 %}
       {% for block in section.blocks %}
-        <div {{ block.shopify_attributes }}>
+        <div {{ block.shopify_attributes }} class="sideSections sideSections--{{ block.type }}">
           {% if block.type == 'menu' %}
             {% assign sidebar_menu = linklists[block.settings.custom_menu_linklist] %}
             {% if sidebar_menu != blank %}
@@ -86,20 +94,29 @@
             {% if block.settings.newsletter_richtext != blank %}
               {{ block.settings.newsletter_richtext }}
             {% endif %}
-            {% include 'newsletter' %}
+            {% render 'newsletter' %}
 
           {% elsif block.type == 'recent_posts' %}
-            <h4 class="toggle"><span>+</span>{{ 'blogs.sidebar.recent_articles' | t }}</h4>
+            {% assign current_article = article.id %}
+            {% assign count = 0 %}
+            <!-- <h4 class="toggle"><span>+</span>{{ 'blogs.sidebar.recent_articles' | t }}</h4> -->
             <ul class="blog_list recent_articles">
-              {% for article in blogs[blog_handle].articles limit:10 %}
-                <li>
-                  <a href="{{ article.url }}" title="{{ article.title | escape }}">{{ article.title }}</a>
-                  {% if section.settings.blog_date %}
-                    <div class="meta">
-                      <span class="label">{{ article.published_at | date: format: "month_day_year" }}</span>
-                    </div>
-                  {% endif %}
-                </li>
+              {% for article in blogs[blog_handle].articles %}
+                {% unless article.id == current_article %}
+                  <li>
+                    <a href="{{ article.url }}" title="{{ article.title | escape }}">
+                      <div class="recent_image">{% render 'image-element', image: article.image, alt: article.title, stretch_width: true, max-height: '130' %}</div>
+                      <div class="recent_content {% if article.tags.size > 0 %}tag{% endif %}">
+                        {% if article.tags.size > 0 %}<span class="tagging">{{ article.tags.first }}</span>{% endif %}
+                        {{ article.title }}
+                      </div>
+                    </a>
+                  </li>
+                  {% assign count = count | plus: 1 %}
+                {% endunless %}
+                {% if count == 3 %}
+                  {% break %}
+                {% endif %}
               {% endfor %}
             </ul>
 
@@ -122,9 +139,155 @@
             <ul class="blog_list toggle_list content_block">
               <li>{{ block.settings.text }}</li>
             </ul>
+
+          {% elsif block.type == 'content_headings' %}
+            <ul class="content_headings">
+              {% assign content = article.content %}
+              {% assign h2s = content | split: '<h2' %}
+              
+              {% for h2 in h2s %}
+                {% assign h2_end = h2 | split: '</h2>' %}
+                {% if h2_end[0] != h2 and h2.size != 0 %}
+                  <li class="headingLinks">
+                    <a href="#{{ h2_end[0] 
+                      | downcase 
+                      | replace: '&nbsp;', '' 
+                      | replace: ' ', ''
+                      | remove: '%C2%A0'
+                      | replace: ' ', '-' 
+                      | replace: '_', '-' 
+                      | remove: '.' 
+                      | remove: ',' 
+                      | remove: '!' 
+                      | remove: '#' 
+                      | remove: '"' 
+                      | remove: '@' 
+                      | remove: '$' 
+                      | remove: '>' 
+                      | remove: '-data-mce-fragment=' 
+                      | remove: 1
+                      | remove: 2
+                      | remove: 3
+                      | remove: 4
+                      | remove: 5
+                      | remove: 6
+                      | remove: 7
+                      | remove: 8
+                      | remove: 9
+                      | remove: 0
+                      | remove: '/'
+                      | remove: '<span'
+                      | remove: 'lang=en'
+                      | strip_html 
+                      | strip 
+                      | escape 
+                      | replace_first: '-', ''
+                    }}">
+                      <span>
+                        {{ h2_end[0] 
+                        | replace: '&nbsp;', '' 
+                        | replace: ' ', ''
+                        | remove: '%C2%A0'
+                        | remove: '>'
+                        | remove: '"' 
+                        | remove: 'data-mce-fragment=1' 
+                        | remove: 1 | remove: 2 | remove: 3 | remove: 4 | remove: 5 | remove: 6 | remove: 7 | remove: 8 | remove: 9 | remove: 0 
+                        | remove: '.' 
+                        | remove: '/'
+                        | remove: '<span'
+                        | remove: 'lang=EN'
+                        | strip_html 
+                        | strip 
+                        | escape  }}
+                      </span>
+                      {% render 'arrow-red' %}
+                    </a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              <script>
+                jQuery(document).ready(function () {
+                  const sections = jQuery(".idSelectors");
+                  const navLinks = jQuery(".headingLinks a");
+              
+                  function highlightNav() {
+                      let scrollPosition = jQuery(window).scrollTop();
+              
+                      sections.each(function () {
+                          let section = jQuery(this);
+                          let sectionTop = section.offset().top - 200; // Adjust for better timing
+                          let sectionId = section.attr("id");
+              
+                          if (scrollPosition >= sectionTop) {
+                              // Remove active class from all links
+                              navLinks.removeClass("active");
+              
+                              // Add active class to the current section's link
+                              jQuery('.headingLinks a[href="#' + sectionId + '"]').addClass("active");
+                          }
+                      });
+                  }
+              
+                  // Run on scroll
+                  jQuery(window).on("scroll", highlightNav);
+              
+                  // Run on page load in case the page is not at the top
+                  highlightNav();
+                });
+              </script>
+            </ul>
+
+          {% elsif block.type == 'cta' %}
+            {% assign ctas = ctas | plus: 1 %}
+            <div class="banner-section banner-sectionI banner-sectionI--{{ ctas }}">
+              <div class="banner-section__image">
+                {% if block.settings.link != blank %}
+                  <a href="{% if ctas == 1 %}{{ article.metafields.cta1.cta_button.value.url | default: block.settings.link }}{% else %}{{ article.metafields.cta2.cta_button.value.url | default: block.settings.link }}{% endif %}">
+                {% endif %}
+                {% if block.settings.image != nil %}
+                  
+                  {% if ctas == 1 %}
+                    {% assign block_i = article.metafields.cta1.cta_image.value | default: block.settings.image %}
+                  {% else %}
+                    {% assign block_i = article.metafields.cta2.cta_image.value | default: block.settings.image %}
+                  {% endif %}
+                  {% render 'image-element', image: block_i, alt: block.settings.image.alt, stretch_width: true, max-height: '600' %}
+                {% else %}
+                  {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--banner' }}
+                {% endif %}
+        
+                {% if block.settings.link != blank %}
+                  </a>
+                {% endif %}
+                {% if block.settings.image != blank or block.settings.title != blank or block.settings.text != blank or block.settings.button_label != blank %}
+                  <div class="banner-section__caption">
+                    <div class="container">
+                      <div class="columns {% if block.settings.text_position == 'left' %} nine offset-by-one {% elsif block.settings.text_position == 'right' %} eight offset-by-seven {% else %} ten offset-by-three {% endif %} align_{{ block.settings.text_align }}">
+                        {% if block.settings.title != blank %}
+                          <h4 class="banner-section__caption-headline headline">
+                            {% if ctas == 1 %}{{ article.metafields.cta1.cta_title.value | default: block.settings.title | escape }}{% else %}{{ article.metafields.cta2.cta_title.value | default: block.settings.title | escape }}{% endif %}
+                          </h4>
+                        {% endif %}
+                        {% if block.settings.button_label != blank %}
+                          <a {% if block.settings.link != blank %}href="{{ article.metafields.cta1.cta_button.value.url | default: block.settings.link }}"{% endif %} class="action_button {% if settings.button_style == 'outline' %}action_button--has-outline{% elsif settings.button_style == 'solid' %}action_button--is-solid{% endif %}
+                        {% if settings.shop_button_style == 'rounded' or settings.shop_button_style == 'bevel' %}action_button--is-rounded{% endif %}
+                        {% if settings.slideshow_shadow %}action_button--has-text-shadow{% endif %}
+                        {% if settings.shop_button_style == 'bevel' %}action_button--is-bevel{% endif %}">
+                            {% if ctas == 1 %}{{ article.metafields.cta1.cta_button.value.text | default: block.settings.button_label | escape }}{% else %}{{ article.metafields.cta2.cta_button.value.text | default: block.settings.button_label | escape }}{% endif %}
+                          </a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            
           {% endif %}
         </div>
       {% endfor %}
+      
     </div>
   </div>
 {% endif %}

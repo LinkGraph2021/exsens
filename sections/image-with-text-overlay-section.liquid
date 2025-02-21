@@ -18,9 +18,9 @@
             <div class="container">
               <div class="columns {% if section.settings.text_position == 'left' %} nine offset-by-one {% elsif section.settings.text_position == 'right' %} eight offset-by-seven {% else %} ten offset-by-three {% endif %} align_{{ section.settings.text_align }}">
                 {% if section.settings.title != blank %}
-                  <h1 class="banner-section__caption-headline headline">
+                  <h2 class="banner-section__caption-headline headline">
                     {{ section.settings.title | escape }}
-                  </h1>
+                  </h2>
                 {% endif %}
                 {% if section.settings.text != blank %}
                   <div class="banner-section__caption-subtitle subtitle">
