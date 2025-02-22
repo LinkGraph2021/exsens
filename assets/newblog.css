@@ -1342,12 +1342,13 @@
     font-size: 15px;
   }
   .article .content .blogProduct .blogProductContent {
-    width: 80%;
-    max-width: 80%;
+    width: 75%;
+    max-width: 75%;
   }
   .article .content .blogProduct .blogProductImage {
-    width: 20vw;
-    right: 4%;
+    width: 24vw;
+    right: 6%;
+    top: -40px;
   }
 
   .article .content .contentWrapper>div:last-child{
